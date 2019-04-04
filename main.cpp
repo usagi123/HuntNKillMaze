@@ -12,10 +12,21 @@
 
 using namespace std;
 
-typedef pair<int, int> coordinator;
-typedef pair<coordinator, coordinator> edge;
+typedef pair<int, int> coord;
+typedef pair<coord, coord> edge;
 
-vector<edge> mazeGenerator(int seed, int width, int height, bool withSeed) {
+void feedMeYourInput();
+vector<edge> huntNKillAlgo(int seed, int width, int height, bool seedStatus);
+void whereIsYourEdge(int seed, int width, int height, bool seedStatus);
+
+int main() {
+
+    whereIsYourEdge(123456, 10, 10, true);
+
+    return 0;
+}
+
+vector<edge> huntNKillAlgo(int seed, int width, int height, bool seedStatus) {
     bool visitedArray[height][width];
     for (int m = 0; m < height; ++m) {
         for (int i = 0; i < width; ++i) {
@@ -24,79 +35,79 @@ vector<edge> mazeGenerator(int seed, int width, int height, bool withSeed) {
     }
 
     vector<edge> edges;
-    if (withSeed) {
-        srand(time(0) + seed);
+    if (seedStatus) {
+        srand(clock() + seed);
     } else {
-        srand(time(0));
+        srand(clock());
     }
 
-    bool keepHunting = true;
-    bool keepKilling = true;
+    bool huntingStatus = true;
+    bool killingStatus = true;
 
-    coordinator startingCell;
+    coord startingCell;
     startingCell.first = rand() % height;
     startingCell.second = rand() % width;
     visitedArray[startingCell.first][startingCell.second] = true;
     bool starting = true;
 
-    while (keepHunting) {
+    while (huntingStatus) {
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
                 if (!visitedArray[j][i]) {
-                    keepKilling = true;
+                    killingStatus = true;
                     break;
                 } else {
-                    keepKilling = false;
+                    killingStatus = false;
                 }
             }
         }
-        while (keepKilling) {
-            vector<coordinator> neighbours;
-            neighbours.clear();
+        while (killingStatus) {
+            vector<coord> neighbors;
+            neighbors.clear();
 
             if (startingCell.first - 1 > -1) {
-                coordinator topCell;
+                coord topCell;
                 topCell.first = startingCell.first - 1;
                 topCell.second = startingCell.second;
-                neighbours.push_back(topCell);
+                neighbors.push_back(topCell);
             }
 
             if (startingCell.second + 1 < width) {
-                coordinator rightCell;
+                coord rightCell;
                 rightCell.first = startingCell.first;
                 rightCell.second = startingCell.second + 1;
-                neighbours.push_back(rightCell);
+                neighbors.push_back(rightCell);
             }
 
             if (startingCell.first + 1 < height) {
-                coordinator bottomCell;
+                coord bottomCell;
                 bottomCell.first = startingCell.first + 1;
                 bottomCell.second = startingCell.second;
-                neighbours.push_back(bottomCell);
+                neighbors.push_back(bottomCell);
             }
 
             if (startingCell.second - 1 > -1) {
-                coordinator leftCell;
+                coord leftCell;
                 leftCell.first = startingCell.first;
                 leftCell.second = startingCell.second - 1;
-                neighbours.push_back(leftCell);
+                neighbors.push_back(leftCell);
             }
 
-            vector<int> randomizedNeighbours;
-            randomizedNeighbours.clear();
+            vector<int> availableNeighbors;
+            availableNeighbors.clear();
             bool keepSeeking = true;
             while (keepSeeking) {
-                int currentRandom = rand() % neighbours.size();
+                int currentRandom = rand() % neighbors.size();
                 bool addingRandom = true;
-                for (int i = 0; i < randomizedNeighbours.size(); ++i) {
-                    if (randomizedNeighbours[i] == currentRandom) {
+                for (int i = 0; i < availableNeighbors.size(); ++i) {
+                    if (availableNeighbors[i] == currentRandom) {
                         addingRandom = false;
                         break;
                     }
                 }
                 if (addingRandom) {
-                    randomizedNeighbours.push_back(currentRandom);
-                    coordinator neighbour = neighbours[currentRandom];
+                    availableNeighbors.push_back(currentRandom);
+                    coord neighbour = neighbors[currentRandom];
                     if (!visitedArray[neighbour.first][neighbour.second]) {
                         keepSeeking = false;
                         visitedArray[neighbour.first][neighbour.second] = true;
@@ -106,12 +117,11 @@ vector<edge> mazeGenerator(int seed, int width, int height, bool withSeed) {
                         edges.push_back(edge1);
                         startingCell.first = neighbour.first;
                         startingCell.second = neighbour.second;
-//                        cout << "Killed";
                     }
                 } else {
-                    if (randomizedNeighbours.size() == neighbours.size()) {
+                    if (availableNeighbors.size() == neighbors.size()) {
                         keepSeeking = false;
-                        keepKilling = false;
+                        killingStatus = false;
                     }
                 }
             }
@@ -123,37 +133,37 @@ vector<edge> mazeGenerator(int seed, int width, int height, bool withSeed) {
                 if (!visitedArray[k][i]) {
                     startingCell.first = k;
                     startingCell.second = i;
-                    vector<coordinator> neighbours;
+                    vector<coord> neighbours;
                     neighbours.clear();
                     if (startingCell.first - 1 > -1) {
-                        coordinator topCell;
+                        coord topCell;
                         topCell.first = startingCell.first - 1;
                         topCell.second = startingCell.second;
                         neighbours.push_back(topCell);
                     }
 
                     if (startingCell.second + 1 < width) {
-                        coordinator rightCell;
+                        coord rightCell;
                         rightCell.first = startingCell.first;
                         rightCell.second = startingCell.second + 1;
                         neighbours.push_back(rightCell);
                     }
 
                     if (startingCell.first + 1 < height) {
-                        coordinator bottomCell;
+                        coord bottomCell;
                         bottomCell.first = startingCell.first + 1;
                         bottomCell.second = startingCell.second;
                         neighbours.push_back(bottomCell);
                     }
 
                     if (startingCell.second - 1 > -1) {
-                        coordinator leftCell;
+                        coord leftCell;
                         leftCell.first = startingCell.first;
                         leftCell.second = startingCell.second - 1;
                         neighbours.push_back(leftCell);
                     }
                     for (int j = 0; j < neighbours.size(); ++j) {
-                        coordinator neighbour = neighbours[j];
+                        coord neighbour = neighbours[j];
                         if (visitedArray[neighbour.first][neighbour.second]) {
                             foundStarting = true;
                             break;
@@ -174,7 +184,7 @@ vector<edge> mazeGenerator(int seed, int width, int height, bool withSeed) {
                             }
                             if (addingRandom) {
                                 randomizedNeighbours.push_back(currentRandom);
-                                coordinator neighbour = neighbours[currentRandom];
+                                coord neighbour = neighbours[currentRandom];
                                 if (visitedArray[neighbour.first][neighbour.second]) {
                                     keepSeeking = false;
                                     visitedArray[startingCell.first][startingCell.second] = true;
@@ -182,7 +192,6 @@ vector<edge> mazeGenerator(int seed, int width, int height, bool withSeed) {
                                     edge1.first = startingCell;
                                     edge1.second = neighbour;
                                     edges.push_back(edge1);
-//                                    cout << "Hunted";
                                 }
                             } else {
                                 if (randomizedNeighbours.size() == neighbours.size()) {
@@ -204,10 +213,10 @@ vector<edge> mazeGenerator(int seed, int width, int height, bool withSeed) {
         for (int l = 0; l < height; ++l) {
             for (int i = 0; i < width; ++i) {
                 if (!visitedArray[l][i]) {
-                    keepHunting = true;
+                    huntingStatus = true;
                     break;
                 } else {
-                    keepHunting = false;
+                    huntingStatus = false;
                 }
             }
         }
@@ -217,8 +226,8 @@ vector<edge> mazeGenerator(int seed, int width, int height, bool withSeed) {
 }
 
 
-int whereIsYourEdge(int seed, int width, int height, bool withSeed) {
-    vector<pair<pair<int, int>, pair<int, int>>> mazeVector = mazeGenerator(seed, width, width, true);
+void whereIsYourEdge(int seed, int width, int height, bool seedStatus) {
+    vector<pair<pair<int, int>, pair<int, int>>> mazeVector = huntNKillAlgo(seed, width, width, seedStatus);
     vector<pair<pair<int, int>, pair<int, int>>> edgePathVector;
 
     for (auto i = 0; i < mazeVector.size(); i++) {
@@ -325,14 +334,4 @@ int whereIsYourEdge(int seed, int width, int height, bool withSeed) {
     file.open("aloha.svg");
     file << mazeString;
     file.close();
-
-    return 0;
-
-}
-
-int main() {
-
-    whereIsYourEdge(123456, 10, 10, true);
-
-    return 0;
 }
