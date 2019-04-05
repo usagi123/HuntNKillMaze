@@ -20,25 +20,35 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
 vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height);
 void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width, int height);
 void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height);
+string readYourBinaryMazeDetails(string fileName); //and convert it from binary to string
 int rngDice(int min, int max);
 
 int main() {
-    drawThatSVGMazeForMe("aloha.svg", 0, true, 10, 10);
+    drawThatSVGMazeForMe("aloha.svg", 0, true, 100, 100);
 //    yourMazeDetailsInBinary("aloha.maze", 123456, true, 10, 10);
+//    cout << readYourBinaryMazeDetails("aloha.maze") << endl;
 
+//    feedMeInput(); //TODO: WIP, still does not works properly. Only --g seed width height flag works
     return 0;
 }
 
 void feedMeInput() {
     string userInput;
-    string errorMessage = "Wrong params";
+    string stop = "stop";
+    string errorInputMessage = "Wrong params \n";
+    string zeroInputMessage = "Some input smaller or equal to 0 \n";
+    string mazeGenCustomSeedMessage = "Running maze generator with custom seed \n";
 
     do {
         vector<string> userInputVector;
         bool validInput = false;
-        pair<bool, int> customSeedFlag;
-        pair<bool, int> defaultSeedFlag;
 
+        pair<int, bool> defaultSeedFlag;
+        pair<int, bool> customSeedFlag;
+        pair<int, bool> loadBinaryFlag;
+        pair<int, bool> loadSVGFlag;
+        pair<int, bool> saveBinaryFlag;
+        pair<int, bool> saveSVGFlag;
 
         cout << "./mazer ";
         getline(cin, userInput);
@@ -49,21 +59,198 @@ void feedMeInput() {
 
         for (auto i = 0; i < userInputVector.size(); i++) {
             if (userInputVector[i] == "-g") {
-                if (!defaultSeedFlag.first) {
-                    defaultSeedFlag.second = i;
-                    defaultSeedFlag.first = true;
+                if (!defaultSeedFlag.second) {
+                    defaultSeedFlag.first = i;
+                    defaultSeedFlag.second = true;
                     validInput = true;
                 } else {
                     validInput = false;
-                    errorMessage;
+                    cout << errorInputMessage;
                     break;
                 }
             }
-
+            if (userInputVector[i] == "--g") {
+                if (!customSeedFlag.second) {
+                    customSeedFlag.first = i;
+                    customSeedFlag.second = true;
+                    validInput = true;
+                } else {
+                    validInput = false;
+                    cout << errorInputMessage;
+                    break;
+                }
+            }
+            if (userInputVector[i] == "--lb") {
+                if (!loadBinaryFlag.second) {
+                    loadBinaryFlag.first = i;
+                    loadBinaryFlag.second = true;
+                    validInput = true;
+                } else {
+                    validInput = false;
+                    cout << errorInputMessage;
+                    break;
+                }
+            }
+            if (userInputVector[i] == "--lv") {
+                if (!loadSVGFlag.second) {
+                    loadSVGFlag.first = i;
+                    loadSVGFlag.second = true;
+                    validInput = true;
+                } else {
+                    validInput = false;
+                    cout << errorInputMessage;
+                    break;
+                }
+            }
+            if (userInputVector[i] == "--sb") {
+                if (!saveBinaryFlag.second) {
+                    saveBinaryFlag.first = i;
+                    saveBinaryFlag.second = true;
+                    validInput = true;
+                } else {
+                    validInput = false;
+                    cout << errorInputMessage;
+                    break;
+                }
+            }
+            if (userInputVector[i] == "--sv") {
+                if (!saveSVGFlag.second) {
+                    saveSVGFlag.first = i;
+                    saveSVGFlag.second = true;
+                    validInput = true;
+                } else {
+                    validInput = false;
+                    cout << errorInputMessage;
+                    break;
+                }
+            }
         }
 
+        if (validInput) {
+            bool canSave = true;
+            int mWidth = 0;
+            int mHeight = 0;
 
-    } while (userInput != "stop");
+            if (customSeedFlag.second) {
+                int seed = 0;
+                int width = 0;
+                int height = 0;
+                string fileName;
+
+                try {
+                    seed = stoi(userInputVector[customSeedFlag.first + 1]);
+                    width = stoi(userInputVector[customSeedFlag.first + 2]);
+                    height = stoi(userInputVector[customSeedFlag.first + 3]);
+                    fileName = userInputVector[saveBinaryFlag.first + 4];
+
+                    cout << fileName << endl;
+
+                    if (seed > 0 && width > 0 && height > 0) {
+                        canSave = true;
+                        cout << mazeGenCustomSeedMessage;
+                        mWidth = width;
+                        mHeight = height;
+                        whereIsYourEdge(seed, true, width, height);
+//                        drawThatSVGMazeForMe(fileName, seed, true, width, height);
+                        break;
+                    } else {
+                        canSave = false;
+                        cout << zeroInputMessage;
+                    }
+                } catch (...) {
+                    canSave = false;
+                    cout << errorInputMessage;
+                }
+            }
+
+            if (defaultSeedFlag.second) {
+                int firstParam = 0;
+                int secondParam = 0;
+
+                try {
+                    firstParam = stoi(userInputVector[defaultSeedFlag.first + 1]);
+                    secondParam = stoi(userInputVector[defaultSeedFlag.first + 2]);
+
+                    int thirdParam = 0;
+
+                    try {
+                        thirdParam = stoi(userInputVector[defaultSeedFlag.first + 3]);
+
+                        if (firstParam > 0 && secondParam > 0 && thirdParam > 0) {
+                            canSave = true;
+                            cout << "Running maze generator with random seed \n";
+                            mWidth = secondParam;
+                            mHeight = thirdParam;
+                            whereIsYourEdge(firstParam, true, secondParam, thirdParam);
+                        } else {
+                            canSave = false;
+                            cout << zeroInputMessage;
+                        }
+                    } catch (...) {
+                        if (firstParam > 0 && secondParam > 0) {
+                            canSave = true;
+                            cout << mazeGenCustomSeedMessage;
+                            mWidth = firstParam;
+                            mHeight = secondParam;
+                            whereIsYourEdge(0, false, firstParam, secondParam);
+                        } else {
+                            canSave = false;
+                            cout << zeroInputMessage;
+                        }
+                    }
+                } catch (...) {
+                    canSave = false;
+                    cout << errorInputMessage;
+                }
+            }
+
+            if (loadBinaryFlag.second) {
+                // call load binary func here
+            }
+
+            if (loadSVGFlag.second) {
+                // call load binary func here
+            }
+
+            if (customSeedFlag.second && saveBinaryFlag.second) {
+                int seed = 0;
+                int width = 0;
+                int height = 0;
+                string fileName;
+
+                try {
+                    seed = stoi(userInputVector[customSeedFlag.first + 1]);
+                    width = stoi(userInputVector[customSeedFlag.first + 2]);
+                    height = stoi(userInputVector[customSeedFlag.first + 3]);
+//                    fileName = userInputVector[saveBinaryFlag.first + 4];
+
+                    if (seed > 0 && width > 0 && height > 0) {
+                        canSave = true;
+                        cout << mazeGenCustomSeedMessage;
+                        mWidth = width;
+                        mHeight = height;
+                        drawThatSVGMazeForMe(fileName, seed, true, width, height);
+                        break;
+                    } else {
+                        canSave = false;
+                        cout << zeroInputMessage;
+                    }
+                } catch (...) {
+                    canSave = false;
+                    cout << errorInputMessage;
+                }
+            }
+
+        } else {
+            if (userInputVector[0] != stop) {
+                cout << errorInputMessage;
+            }
+
+            if (userInputVector[0] == stop) {
+                break;
+            }
+        }
+    } while (userInput != stop);
 }
 
 int rngDice(int min, int max) {
@@ -424,6 +611,30 @@ void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int wid
     }
 
     file.open(fileName, ios::out | ios::binary);
-    file.write((char const*) &ss, sizeof(ss));
-    file.close();
+    if (file.is_open()) {
+        file.write((char const*) &ss, sizeof(ss));
+        file.close();
+    }
+    else cout << "Unable to open file";
+}
+
+string readYourBinaryMazeDetails(string fileName) {
+    ofstream file (fileName);
+    string lineOfBinary;
+
+    if (file.is_open()) {
+        file.open(fileName, ios::out | ios::app);
+        file.close();
+    }
+    else cout << "Unable to open file";
+
+    stringstream ss(lineOfBinary);
+    string output;
+    while (ss.good()) {
+        bitset<8> bits;
+        ss >> bits;
+        char c = char(bits.to_ulong());
+        output += c;
+    }
+    return output;
 }
