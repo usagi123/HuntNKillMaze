@@ -59,7 +59,7 @@ void feedMeInput() {
         ss << userInput;
         copy(istream_iterator<string>(ss), istream_iterator<string>(), back_inserter(userInputVector));
 
-        //Loop through userinput vector to check for flags
+        //Loop through user input vector to check for flags
         for (auto i = 0; i < userInputVector.size(); i++) {
             if (userInputVector[i] == "-g") {
                 if (!defaultSeedFlag.second) {
@@ -334,6 +334,7 @@ vector<mazePath> hnkAllDemCells(int seed, int width, int height) {
             }
         }
 
+        //Check if the cell was already founded
         bool foundStarting = false;
         for (int k = 0; k < height; ++k) {
             for (int i = 0; i < width; ++i) {
@@ -376,6 +377,7 @@ vector<mazePath> hnkAllDemCells(int seed, int width, int height) {
                             break;
                         }
                     }
+                    //If that cell was founded, find their available neighbors
                     if (foundStarting) {
                         vector<int> randomizedNeighbours;
                         randomizedNeighbours.clear();
@@ -390,6 +392,7 @@ vector<mazePath> hnkAllDemCells(int seed, int width, int height) {
                                     break;
                                 }
                             }
+                            //And move randomly to that avaibale neighbor
                             if (addingRandom) {
                                 randomizedNeighbours.push_back(currentRandom);
                                 coord neighbour = neighbors[currentRandom];
@@ -418,6 +421,7 @@ vector<mazePath> hnkAllDemCells(int seed, int width, int height) {
                 break;
             }
         }
+        //Scan the maze from top to bottom, left to right
         for (int l = 0; l < height; ++l) {
             for (int i = 0; i < width; ++i) {
                 if (!visitedArray[l][i]) {
