@@ -19,9 +19,9 @@ void feedMeInput();
 vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height);
 vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height);
 void drawThatSVGMazeForMe(int seed, bool seedStatus, int width, int height);
-void creatingMazeDetails(string fileName, int seed, bool seedStatus, int width, int height);
+void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height);
 
-void creatingMazeDetails(string fileName, int seed, bool seedStatus, int width, int height) {
+void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height) {
 
     pair<pair<int, int>, pair<int, vector<mazeEdges>>> mazeDetails;
     vector<mazeEdges> edges = whereIsYourEdge(seed, seedStatus, width, height);
@@ -31,20 +31,25 @@ void creatingMazeDetails(string fileName, int seed, bool seedStatus, int width, 
     mazeDetails.second.first = edges.size();
     mazeDetails.second.second = edges;
 
-//    cout << mazeDetails.first.first << endl;
-//    cout << mazeDetails.first.second << endl;
-//    cout << mazeDetails.second.first << endl;
-//
-//    for (auto i = 0; i < edges.size(); i++) {
-//        cout << edges[i].first.first << edges[i].first.second << edges[i].second.first << edges[i].second.second << endl;
-//    }
+    ofstream file;
+    stringstream ss;
+    ss << mazeDetails.first.first << "\n";
+    ss << mazeDetails.first.second << "\n";
+    ss << mazeDetails.second.first << "\n";
+    for (auto i = 0; i < edges.size(); i++) {
+        ss << edges[i].first.first << edges[i].first.second << edges[i].second.first << edges[i].second.second << "\n";
+    }
+
+    file.open(fileName, ios::out | ios::binary);
+    file.write((char const*) &ss, sizeof(ss));
+    file.close();
 }
 
 int main() {
 
-    drawThatSVGMazeForMe(123456, true, 10, 10);
+//    drawThatSVGMazeForMe(123456, true, 10, 10);
 
-//    creatingMazeDetails("aloha.maze", 123456, true, 10, 10);
+    yourMazeDetailsInBinary("aloha.maze", 123456, true, 10, 10);
 
     return 0;
 }
