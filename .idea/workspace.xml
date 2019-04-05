@@ -11,10 +11,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="930cf839-e576-4146-97a5-3734de36bb2f" name="Default Changelist" comment="Added comments">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-    </list>
+    <list default="true" id="930cf839-e576-4146-97a5-3734de36bb2f" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,16 +25,16 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="28" selection-start-line="28" selection-end-line="28" />
+            <state relative-caret-position="229">
+              <caret line="19" column="33" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="33" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -82,11 +79,6 @@
             <path>
               <item name="huntNkill" type="b2602c69:ProjectViewProjectNode" />
               <item name="huntNkill" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="huntNkill" type="b2602c69:ProjectViewProjectNode" />
-              <item name="huntNkill" type="462c0819:PsiDirectoryNode" />
-              <item name="cmake-build-debug" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -133,7 +125,7 @@
       <workItem from="1554393750640" duration="3331000" />
       <workItem from="1554407943946" duration="3153000" />
       <workItem from="1554411580425" duration="10049000" />
-      <workItem from="1554441787198" duration="20481000" />
+      <workItem from="1554441787198" duration="21659000" />
     </task>
     <task id="LOCAL-00001" summary="Clean codes">
       <created>1554412391508</created>
@@ -184,15 +176,28 @@
       <option name="project" value="LOCAL" />
       <updated>1554469555687</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Tweak feedMeInput()">
+      <created>1554476646660</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1554476646660</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Tweak feedMeInput()">
+      <created>1554476671355</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1554476671355</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37014000" />
+    <option name="totallyTimeSpent" value="38192000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14896215" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -228,12 +233,10 @@
     <MESSAGE value="Add random option" />
     <MESSAGE value="Add readBinaryFile, WIP feedMeInput()" />
     <MESSAGE value="Added comments" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added comments" />
+    <MESSAGE value="Tweak feedMeInput()" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tweak feedMeInput()" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -270,13 +273,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="28" selection-start-line="28" selection-end-line="28" />
+        <state relative-caret-position="229">
+          <caret line="19" column="33" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="33" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>
