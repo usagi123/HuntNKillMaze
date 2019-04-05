@@ -16,47 +16,25 @@ typedef pair<int, int> coord;
 typedef pair<coord, coord> mazePath, mazeEdges;
 
 void feedMeInput(); //control the user input
-void feedMeInputTwo(); //version 2
-vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height); //Hunt and Kill algorithm
-vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height); //Find edges between 2 cells in maze path
-void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width, int height); //Draw maze details into SVG files
-void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height); //Export maze details into binary file
+vector<mazePath> hnkAllDemCells(int seed, int width, int height); //Hunt and Kill algorithm
+vector<mazeEdges> whereIsYourEdge(int seed, int width, int height); //Find edges between 2 cells in maze path
+void drawThatSVGMazeForMe(string fileName, int seed, int width, int height); //Draw maze details into SVG files
+void yourMazeDetailsInBinary(string fileName, int seed, int width, int height); //Export maze details into binary file
 string readYourBinaryMazeDetails(string fileName); //and convert it from binary to string //Import maze details binary file
 int rngDice(int min, int max); //Randomize function with mt19937
 
 int main() {
-    drawThatSVGMazeForMe("10x10.svg", 0, true, 10, 10);
+//    drawThatSVGMazeForMe("3x3.svg", 0, 3, 3);
 //    yourMazeDetailsInBinary("aloha.maze", 123456, true, 10, 10);
-//    cout << readYourBinaryMazeDetails("aloha.maze") << endl;
-
-//    feedMeInput(); //TODO: WIP, still does not works properly. Only --g seed width height flag works
+    feedMeInput(); //TODO: WIP, still does not works properly.
     return 0;
 }
 
-void feedMeInputTwo() {
-    int seed = 0;
-    bool seedStatus;
-    int width = 0;
-    int height = 0;
-    string mazeSVGFileName;
-    string mazeBinaryFileName;
-    int choice = 0;
-
-    cout << "Maze width: ";
-    cin >> width;
-    cout << "Maze height: ";
-    cin >> height;
-    cout << "Seed (optional, 0 to skip): ";
-    cin >> seed;
-
-    if (seed == 0) {
-        seedStatus = false;
-    } else {
-        seedStatus = true;
-    }
-}
-
 void feedMeInput() {
+    cout << "Syntax" << endl;
+    cout << "--g seed width height name" << endl;
+    cout << "-g width height name" << endl;
+
     string userInput;
     string stop = "stop";
     string errorInputMessage = "Wrong params \n";
@@ -81,6 +59,7 @@ void feedMeInput() {
         ss << userInput;
         copy(istream_iterator<string>(ss), istream_iterator<string>(), back_inserter(userInputVector));
 
+        //Loop through userinput vector to check for flags
         for (auto i = 0; i < userInputVector.size(); i++) {
             if (userInputVector[i] == "-g") {
                 if (!defaultSeedFlag.second) {
@@ -167,15 +146,16 @@ void feedMeInput() {
                     height = stoi(userInputVector[customSeedFlag.first + 3]);
                     fileName = userInputVector[saveBinaryFlag.first + 4];
 
-                    cout << fileName << endl;
-
                     if (seed > 0 && width > 0 && height > 0) {
                         canSave = true;
                         cout << mazeGenCustomSeedMessage;
                         mWidth = width;
                         mHeight = height;
-                        whereIsYourEdge(seed, true, width, height);
-//                        drawThatSVGMazeForMe(fileName, seed, true, width, height);
+                        stringstream ssSVG, ssMaze;
+                        ssSVG << fileName << ".svg";
+                        ssMaze << fileName << ".maze";
+                        drawThatSVGMazeForMe(ssSVG.str(), seed, width, height);
+                        yourMazeDetailsInBinary(ssMaze.str(), seed, width, height);
                         break;
                     } else {
                         canSave = false;
@@ -188,72 +168,26 @@ void feedMeInput() {
             }
 
             if (defaultSeedFlag.second) {
-                int firstParam = 0;
-                int secondParam = 0;
-
-                try {
-                    firstParam = stoi(userInputVector[defaultSeedFlag.first + 1]);
-                    secondParam = stoi(userInputVector[defaultSeedFlag.first + 2]);
-
-                    int thirdParam = 0;
-
-                    try {
-                        thirdParam = stoi(userInputVector[defaultSeedFlag.first + 3]);
-
-                        if (firstParam > 0 && secondParam > 0 && thirdParam > 0) {
-                            canSave = true;
-                            cout << "Running maze generator with random seed \n";
-                            mWidth = secondParam;
-                            mHeight = thirdParam;
-                            whereIsYourEdge(firstParam, true, secondParam, thirdParam);
-                        } else {
-                            canSave = false;
-                            cout << zeroInputMessage;
-                        }
-                    } catch (...) {
-                        if (firstParam > 0 && secondParam > 0) {
-                            canSave = true;
-                            cout << mazeGenCustomSeedMessage;
-                            mWidth = firstParam;
-                            mHeight = secondParam;
-                            whereIsYourEdge(0, false, firstParam, secondParam);
-                        } else {
-                            canSave = false;
-                            cout << zeroInputMessage;
-                        }
-                    }
-                } catch (...) {
-                    canSave = false;
-                    cout << errorInputMessage;
-                }
-            }
-
-            if (loadBinaryFlag.second) {
-                // call load binary func here
-            }
-
-            if (loadSVGFlag.second) {
-                // call load binary func here
-            }
-
-            if (customSeedFlag.second && saveBinaryFlag.second) {
                 int seed = 0;
                 int width = 0;
                 int height = 0;
                 string fileName;
 
                 try {
-                    seed = stoi(userInputVector[customSeedFlag.first + 1]);
-                    width = stoi(userInputVector[customSeedFlag.first + 2]);
-                    height = stoi(userInputVector[customSeedFlag.first + 3]);
-//                    fileName = userInputVector[saveBinaryFlag.first + 4];
+                    width = stoi(userInputVector[defaultSeedFlag.first + 1]);
+                    height = stoi(userInputVector[defaultSeedFlag.first + 2]);
+                    fileName = userInputVector[saveBinaryFlag.first + 3];
 
-                    if (seed > 0 && width > 0 && height > 0) {
+                    if (width > 0 && height > 0) {
                         canSave = true;
                         cout << mazeGenCustomSeedMessage;
                         mWidth = width;
                         mHeight = height;
-                        drawThatSVGMazeForMe(fileName, seed, true, width, height);
+                        stringstream ssSVG, ssMaze;
+                        ssSVG << fileName << ".svg";
+                        ssMaze << fileName << ".maze";
+                        drawThatSVGMazeForMe(ssSVG.str(), seed, width, height);
+                        yourMazeDetailsInBinary(ssMaze.str(), seed, width, height);
                         break;
                     } else {
                         canSave = false;
@@ -263,6 +197,12 @@ void feedMeInput() {
                     canSave = false;
                     cout << errorInputMessage;
                 }
+            }
+            if (customSeedFlag.second && (saveBinaryFlag.second || saveSVGFlag.second)) {
+                //TODO:
+            }
+            if (customSeedFlag.second && (loadBinaryFlag.second || loadSVGFlag.second)) {
+                //TODO: Does not have working func yet
             }
 
         } else {
@@ -289,7 +229,7 @@ int rngDice(int min, int max) {
     return thatRandomNumber;
 }
 
-vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height) {
+vector<mazePath> hnkAllDemCells(int seed, int width, int height) {
     bool visitedArray[height][width];
     for (int m = 0; m < height; ++m) {
         for (int i = 0; i < width; ++i) {
@@ -298,27 +238,15 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
     }
 
     vector<mazePath> pathsList;
-    //check if user does include seed or not
-    if (seedStatus) { //if yes, combine user seed
-        srand(clock() + seed);
-        seedStatus = true;
-    } else { //if no, then change seedStatus to false, proceed to use rngDice(int min, int max)
-        seedStatus = false;
-    }
+    srand(clock() + seed);
 
     bool huntingStatus = true;
     bool killingStatus = true;
 
     //Pick starting cell coordinate randomly
     coord startingCell;
-    if (seedStatus) {
-        startingCell.first = rngDice(0, height);
-        startingCell.second = rngDice(0, width);
-    } else {
-        startingCell.first = rand() % height;
-        startingCell.second = rand() % width;
-    }
-
+    startingCell.first = rand() % height;
+    startingCell.second = rand() % width;
     visitedArray[startingCell.first][startingCell.second] = true;
     bool starting = true;
 
@@ -375,11 +303,7 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
             bool keepSeeking = true;
             while (keepSeeking) {
                 int currentRandom;
-                if (seedStatus) {
-                    currentRandom = rand() % neighbors.size();
-                } else {
-                    currentRandom = rngDice(0, neighbors.size());
-                }
+                currentRandom = rand() % neighbors.size();
                 bool addingRandom = true;
                 for (int i = 0; i < availableNeighbors.size(); ++i) {
                     if (availableNeighbors[i] == currentRandom) {
@@ -458,11 +382,7 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
                         bool keepSeeking = true;
                         while (keepSeeking) {
                             int currentRandom;
-                            if (seedStatus) {
-                                currentRandom = rand() % neighbors.size();
-                            } else {
-                                currentRandom = rngDice(0, neighbors.size());
-                            }
+                            currentRandom = rand() % neighbors.size();
                             bool addingRandom = true;
                             for (int m = 0; m < randomizedNeighbours.size(); ++m) {
                                 if (randomizedNeighbours[m] == currentRandom) {
@@ -512,9 +432,9 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
     return pathsList;
 }
 
-vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height) {
+vector<mazeEdges> whereIsYourEdge(int seed, int width, int height) {
     //using returned maze path cell's coordinator, we can calculate the edge between 2 cells in that maze path
-    vector<mazePath> mazeVector = hnkAllDemCells(seed, seedStatus, width, width);
+    vector<mazePath> mazeVector = hnkAllDemCells(seed, width, width);
     vector<mazeEdges> edgePathVector;
 
     for (auto i = 0; i < mazeVector.size(); i++) {
@@ -536,10 +456,10 @@ vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int heig
     return edgePathVector;
 }
 
-void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width, int height) {
+void drawThatSVGMazeForMe(string fileName, int seed, int width, int height) {
     float w = width;
     float h = height;
-    vector<mazeEdges> edgePathVector = whereIsYourEdge(seed, seedStatus, width, height);
+    vector<mazeEdges> edgePathVector = whereIsYourEdge(seed, width, height);
 
     //Got edges from whereIsYourEdge function above, we convert those edges coordinate into an SVG line
     vector<string> deleteSVGLineVector;
@@ -628,11 +548,11 @@ void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width,
     file.close();
 }
 
-void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height) {
+void yourMazeDetailsInBinary(string fileName, int seed, int width, int height) {
 
     //Combine all data gathered and calculated into a mazeDetails
     pair<pair<int, int>, pair<int, vector<mazeEdges>>> mazeDetails;
-    vector<mazeEdges> edges = whereIsYourEdge(seed, seedStatus, width, height);
+    vector<mazeEdges> edges = whereIsYourEdge(seed, width, height);
 
     mazeDetails.first.first = width;
     mazeDetails.first.second = height;
