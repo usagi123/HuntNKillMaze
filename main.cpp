@@ -13,20 +13,80 @@
 using namespace std;
 
 typedef pair<int, int> coord;
-typedef pair<coord, coord> edge;
+typedef pair<coord, coord> mazePath, mazeEdges;
 
-void feedMeYourInput();
-vector<edge> huntNKillAlgo(int seed, int width, int height, bool seedStatus);
-void whereIsYourEdge(int seed, int width, int height, bool seedStatus);
+void feedMeInput();
+vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height);
+vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height);
+void drawThatSVGMazeForMe(int seed, bool seedStatus, int width, int height);
+void creatingMazeDetails(string fileName, int seed, bool seedStatus, int width, int height);
+
+void creatingMazeDetails(string fileName, int seed, bool seedStatus, int width, int height) {
+
+    pair<pair<int, int>, pair<int, vector<mazeEdges>>> mazeDetails;
+    vector<mazeEdges> edges = whereIsYourEdge(seed, seedStatus, width, height);
+
+    mazeDetails.first.first = width;
+    mazeDetails.first.second = height;
+    mazeDetails.second.first = edges.size();
+    mazeDetails.second.second = edges;
+
+//    cout << mazeDetails.first.first << endl;
+//    cout << mazeDetails.first.second << endl;
+//    cout << mazeDetails.second.first << endl;
+//
+//    for (auto i = 0; i < edges.size(); i++) {
+//        cout << edges[i].first.first << edges[i].first.second << edges[i].second.first << edges[i].second.second << endl;
+//    }
+}
 
 int main() {
 
-    whereIsYourEdge(123456, 10, 10, true);
+    drawThatSVGMazeForMe(123456, true, 10, 10);
+
+//    creatingMazeDetails("aloha.maze", 123456, true, 10, 10);
 
     return 0;
 }
 
-vector<edge> huntNKillAlgo(int seed, int width, int height, bool seedStatus) {
+void feedMeInput() {
+    string userInput;
+    string errorMessage = "Wrong params";
+
+    do {
+        vector<string> userInputVector;
+        bool validInput = false;
+        pair<bool, int> customSeedFlag;
+        pair<bool, int> defaultSeedFlag;
+
+
+        cout << "./mazer ";
+        getline(cin, userInput);
+
+        stringstream ss;
+        ss << userInput;
+        copy(istream_iterator<string>(ss), istream_iterator<string>(), back_inserter(userInputVector));
+
+        for (auto i = 0; i < userInputVector.size(); i++) {
+            if (userInputVector[i] == "-g") {
+                if (!defaultSeedFlag.first) {
+                    defaultSeedFlag.second = i;
+                    defaultSeedFlag.first = true;
+                    validInput = true;
+                } else {
+                    validInput = false;
+                    errorMessage;
+                    break;
+                }
+            }
+
+        }
+
+
+    } while (userInput != "stop");
+}
+
+vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height) {
     bool visitedArray[height][width];
     for (int m = 0; m < height; ++m) {
         for (int i = 0; i < width; ++i) {
@@ -34,7 +94,7 @@ vector<edge> huntNKillAlgo(int seed, int width, int height, bool seedStatus) {
         }
     }
 
-    vector<edge> edges;
+    vector<mazePath> pathsList;
     if (seedStatus) {
         srand(clock() + seed);
     } else {
@@ -111,10 +171,10 @@ vector<edge> huntNKillAlgo(int seed, int width, int height, bool seedStatus) {
                     if (!visitedArray[neighbour.first][neighbour.second]) {
                         keepSeeking = false;
                         visitedArray[neighbour.first][neighbour.second] = true;
-                        edge edge1;
+                        mazePath edge1;
                         edge1.first = startingCell;
                         edge1.second = neighbour;
-                        edges.push_back(edge1);
+                        pathsList.push_back(edge1);
                         startingCell.first = neighbour.first;
                         startingCell.second = neighbour.second;
                     }
@@ -188,10 +248,10 @@ vector<edge> huntNKillAlgo(int seed, int width, int height, bool seedStatus) {
                                 if (visitedArray[neighbour.first][neighbour.second]) {
                                     keepSeeking = false;
                                     visitedArray[startingCell.first][startingCell.second] = true;
-                                    edge edge1;
+                                    mazePath edge1;
                                     edge1.first = startingCell;
                                     edge1.second = neighbour;
-                                    edges.push_back(edge1);
+                                    pathsList.push_back(edge1);
                                 }
                             } else {
                                 if (randomizedNeighbours.size() == neighbours.size()) {
@@ -221,18 +281,12 @@ vector<edge> huntNKillAlgo(int seed, int width, int height, bool seedStatus) {
             }
         }
     }
-
-    return edges;
+    return pathsList;
 }
 
-
-void whereIsYourEdge(int seed, int width, int height, bool seedStatus) {
-    vector<pair<pair<int, int>, pair<int, int>>> mazeVector = huntNKillAlgo(seed, width, width, seedStatus);
-    vector<pair<pair<int, int>, pair<int, int>>> edgePathVector;
-
-    for (auto i = 0; i < mazeVector.size(); i++) {
-        cout << mazeVector[i].first.first << mazeVector[i].first.second << mazeVector[i].second.first << mazeVector[i].second.second << endl;
-    }
+vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height) {
+    vector<mazePath> mazeVector = hnkAllDemCells(seed, seedStatus, width, width);
+    vector<mazeEdges> edgePathVector;
 
     for (auto i = 0; i < mazeVector.size(); i++) {
         if (mazeVector[i].first.first < mazeVector[i].second.first && mazeVector[i].first.second == mazeVector[i].second.second) { //x increase, y not change
@@ -249,19 +303,23 @@ void whereIsYourEdge(int seed, int width, int height, bool seedStatus) {
         }
     }
 
+    return edgePathVector;
+}
+
+void drawThatSVGMazeForMe(int seed, bool seedStatus, int width, int height) {
     float w = width;
     float h = height;
+    vector<mazeEdges> edgePathVector = whereIsYourEdge(seed, seedStatus, width, height);
 
     vector<string> deleteSVGLineVector;
 
-
-    for (vector<pair<pair<int, int>, pair<int, int>>>::iterator it = edgePathVector.begin(); it != edgePathVector.end() ; it++) {
+    for (vector<mazeEdges>::iterator it = edgePathVector.begin(); it != edgePathVector.end() ; it++) {
         stringstream ssd;
         ssd << "<line stroke='white' stroke-width='0.005' x1='" << setprecision(2) << (it->first.first)/w << "' y1='" << setprecision(2) << (it->first.second)/h << "' x2='" << setprecision(2) << (it->second.first)/w << "' y2='" << setprecision(2) << (it->second.second)/h << "'/> \n";
         deleteSVGLineVector.push_back(ssd.str());
     }
 
-    for (vector<pair<pair<int, int>, pair<int, int>>>::iterator it = edgePathVector.begin(); it != edgePathVector.end() ; it++) {
+    for (vector<mazeEdges>::iterator it = edgePathVector.begin(); it != edgePathVector.end() ; it++) {
         stringstream ssd;
         ssd << "<line stroke='white' stroke-width='0.005' x1='" << setprecision(2) << (it->second.first)/w << "' y1='" << setprecision(2) << (it->second.second)/h << "' x2='" << setprecision(2) << (it->first.first)/w << "' y2='" << setprecision(2) << (it->first.second)/h << "'/> \n";
         deleteSVGLineVector.push_back(ssd.str());
