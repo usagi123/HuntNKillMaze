@@ -15,21 +15,45 @@ using namespace std;
 typedef pair<int, int> coord;
 typedef pair<coord, coord> mazePath, mazeEdges;
 
-void feedMeInput();
-vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height);
-vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height);
-void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width, int height);
-void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height);
-string readYourBinaryMazeDetails(string fileName); //and convert it from binary to string
-int rngDice(int min, int max);
+void feedMeInput(); //control the user input
+void feedMeInputTwo(); //version 2
+vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height); //Hunt and Kill algorithm
+vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height); //Find edges between 2 cells in maze path
+void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width, int height); //Draw maze details into SVG files
+void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height); //Export maze details into binary file
+string readYourBinaryMazeDetails(string fileName); //and convert it from binary to string //Import maze details binary file
+int rngDice(int min, int max); //Randomize function with mt19937
 
 int main() {
-    drawThatSVGMazeForMe("aloha.svg", 0, true, 100, 100);
+    drawThatSVGMazeForMe("10x10.svg", 0, true, 10, 10);
 //    yourMazeDetailsInBinary("aloha.maze", 123456, true, 10, 10);
 //    cout << readYourBinaryMazeDetails("aloha.maze") << endl;
 
 //    feedMeInput(); //TODO: WIP, still does not works properly. Only --g seed width height flag works
     return 0;
+}
+
+void feedMeInputTwo() {
+    int seed = 0;
+    bool seedStatus;
+    int width = 0;
+    int height = 0;
+    string mazeSVGFileName;
+    string mazeBinaryFileName;
+    int choice = 0;
+
+    cout << "Maze width: ";
+    cin >> width;
+    cout << "Maze height: ";
+    cin >> height;
+    cout << "Seed (optional, 0 to skip): ";
+    cin >> seed;
+
+    if (seed == 0) {
+        seedStatus = false;
+    } else {
+        seedStatus = true;
+    }
 }
 
 void feedMeInput() {
@@ -274,17 +298,18 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
     }
 
     vector<mazePath> pathsList;
-    if (seedStatus) {
+    //check if user does include seed or not
+    if (seedStatus) { //if yes, combine user seed
         srand(clock() + seed);
         seedStatus = true;
-    } else {
-        srand(clock());
+    } else { //if no, then change seedStatus to false, proceed to use rngDice(int min, int max)
         seedStatus = false;
     }
 
     bool huntingStatus = true;
     bool killingStatus = true;
 
+    //Pick starting cell coordinate randomly
     coord startingCell;
     if (seedStatus) {
         startingCell.first = rngDice(0, height);
@@ -297,6 +322,7 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
     visitedArray[startingCell.first][startingCell.second] = true;
     bool starting = true;
 
+    //In hunt mode to scan the whole grid
     while (huntingStatus) {
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
@@ -308,10 +334,13 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
                 }
             }
         }
+
+        //If found avaiable neighbors cell to visitedCell, then proceed to kill (move to it)
         while (killingStatus) {
             vector<coord> neighbors;
             neighbors.clear();
 
+            //Map North/East/West/South cell's coordinator of visitedCell
             if (startingCell.first - 1 > -1) {
                 coord topCell;
                 topCell.first = startingCell.first - 1;
@@ -340,6 +369,7 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
                 neighbors.push_back(leftCell);
             }
 
+            //Check if N/E/W/S cell found above available to move to or not
             vector<int> availableNeighbors;
             availableNeighbors.clear();
             bool keepSeeking = true;
@@ -358,6 +388,7 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
                     }
                 }
                 if (addingRandom) {
+                    //Pick one cell randomly in that vector to move
                     availableNeighbors.push_back(currentRandom);
                     coord neighbour = neighbors[currentRandom];
                     if (!visitedArray[neighbour.first][neighbour.second]) {
@@ -482,10 +513,12 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
 }
 
 vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height) {
+    //using returned maze path cell's coordinator, we can calculate the edge between 2 cells in that maze path
     vector<mazePath> mazeVector = hnkAllDemCells(seed, seedStatus, width, width);
     vector<mazeEdges> edgePathVector;
 
     for (auto i = 0; i < mazeVector.size(); i++) {
+        //TODO: Think a way implement lambda function here for better readability
         if (mazeVector[i].first.first < mazeVector[i].second.first && mazeVector[i].first.second == mazeVector[i].second.second) { //x increase, y not change
             edgePathVector.push_back(make_pair(make_pair(mazeVector[i].second.first, mazeVector[i].second.second), make_pair(mazeVector[i].second.first, mazeVector[i].second.second + 1)));
         }
@@ -508,6 +541,7 @@ void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width,
     float h = height;
     vector<mazeEdges> edgePathVector = whereIsYourEdge(seed, seedStatus, width, height);
 
+    //Got edges from whereIsYourEdge function above, we convert those edges coordinate into an SVG line
     vector<string> deleteSVGLineVector;
 
     for (vector<mazeEdges>::iterator it = edgePathVector.begin(); it != edgePathVector.end() ; it++) {
@@ -522,6 +556,7 @@ void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width,
         deleteSVGLineVector.push_back(ssd.str());
     }
 
+    //Generate a SVG grid
     stringstream ss;
 
     ss << "<svg viewBox='0 0 1 1' width='500' height='500' xmlns='http://www.w3.org/2000/svg'> \n";
@@ -531,6 +566,7 @@ void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width,
     ss << "<line stroke='white' stroke-width='0.005' x1='1' y1='1' x2='0' y2='1'/> \n";
     ss << "<line stroke='white' stroke-width='0.005' x1='0' y1='1' x2='0' y2='0'/> \n";
 
+    //Draw SVG grid based on column loop
     float x1 = 0;
     float y1 = 0;
     float x2 = 0;
@@ -573,6 +609,7 @@ void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width,
 
     string mazeString = ss.str();
 
+    //Find converted edges into SVG line that match in a SVG grid, remove that line. Which result in a maze
     for (auto k = 0; k < deleteSVGLineVector.size(); k++) {
         string target = deleteSVGLineVector[k];
 
@@ -593,6 +630,7 @@ void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width,
 
 void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height) {
 
+    //Combine all data gathered and calculated into a mazeDetails
     pair<pair<int, int>, pair<int, vector<mazeEdges>>> mazeDetails;
     vector<mazeEdges> edges = whereIsYourEdge(seed, seedStatus, width, height);
 
@@ -601,6 +639,7 @@ void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int wid
     mazeDetails.second.first = edges.size();
     mazeDetails.second.second = edges;
 
+    //Push into stringstream
     ofstream file;
     stringstream ss;
     ss << mazeDetails.first.first << "\n";
@@ -610,6 +649,7 @@ void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int wid
         ss << edges[i].first.first << edges[i].first.second << edges[i].second.first << edges[i].second.second << "\n";
     }
 
+    //And save it out
     file.open(fileName, ios::out | ios::binary);
     if (file.is_open()) {
         file.write((char const*) &ss, sizeof(ss));
@@ -619,6 +659,8 @@ void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int wid
 }
 
 string readYourBinaryMazeDetails(string fileName) {
+
+    //Read binary file, convert back to string
     ofstream file (fileName);
     string lineOfBinary;
 
