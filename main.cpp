@@ -18,38 +18,13 @@ typedef pair<coord, coord> mazePath, mazeEdges;
 void feedMeInput();
 vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height);
 vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height);
-void drawThatSVGMazeForMe(int seed, bool seedStatus, int width, int height);
+void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width, int height);
 void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height);
-
-void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height) {
-
-    pair<pair<int, int>, pair<int, vector<mazeEdges>>> mazeDetails;
-    vector<mazeEdges> edges = whereIsYourEdge(seed, seedStatus, width, height);
-
-    mazeDetails.first.first = width;
-    mazeDetails.first.second = height;
-    mazeDetails.second.first = edges.size();
-    mazeDetails.second.second = edges;
-
-    ofstream file;
-    stringstream ss;
-    ss << mazeDetails.first.first << "\n";
-    ss << mazeDetails.first.second << "\n";
-    ss << mazeDetails.second.first << "\n";
-    for (auto i = 0; i < edges.size(); i++) {
-        ss << edges[i].first.first << edges[i].first.second << edges[i].second.first << edges[i].second.second << "\n";
-    }
-
-    file.open(fileName, ios::out | ios::binary);
-    file.write((char const*) &ss, sizeof(ss));
-    file.close();
-}
 
 int main() {
 
-//    drawThatSVGMazeForMe(123456, true, 10, 10);
-
-    yourMazeDetailsInBinary("aloha.maze", 123456, true, 10, 10);
+    drawThatSVGMazeForMe("aloha.maze", 123456, true, 10, 10);
+//    yourMazeDetailsInBinary("aloha.maze", 123456, true, 10, 10);
 
     return 0;
 }
@@ -311,7 +286,7 @@ vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int heig
     return edgePathVector;
 }
 
-void drawThatSVGMazeForMe(int seed, bool seedStatus, int width, int height) {
+void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width, int height) {
     float w = width;
     float h = height;
     vector<mazeEdges> edgePathVector = whereIsYourEdge(seed, seedStatus, width, height);
@@ -394,7 +369,31 @@ void drawThatSVGMazeForMe(int seed, bool seedStatus, int width, int height) {
     }
 
     ofstream file;
-    file.open("aloha.svg");
+    file.open(fileName, ios::out || ios::binary);
     file << mazeString;
+    file.close();
+}
+
+void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height) {
+
+    pair<pair<int, int>, pair<int, vector<mazeEdges>>> mazeDetails;
+    vector<mazeEdges> edges = whereIsYourEdge(seed, seedStatus, width, height);
+
+    mazeDetails.first.first = width;
+    mazeDetails.first.second = height;
+    mazeDetails.second.first = edges.size();
+    mazeDetails.second.second = edges;
+
+    ofstream file;
+    stringstream ss;
+    ss << mazeDetails.first.first << "\n";
+    ss << mazeDetails.first.second << "\n";
+    ss << mazeDetails.second.first << "\n";
+    for (auto i = 0; i < edges.size(); i++) {
+        ss << edges[i].first.first << edges[i].first.second << edges[i].second.first << edges[i].second.second << "\n";
+    }
+
+    file.open(fileName, ios::out | ios::binary);
+    file.write((char const*) &ss, sizeof(ss));
     file.close();
 }
