@@ -20,10 +20,10 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
 vector<mazeEdges> whereIsYourEdge(int seed, bool seedStatus, int width, int height);
 void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width, int height);
 void yourMazeDetailsInBinary(string fileName, int seed, bool seedStatus, int width, int height);
+int rngDice(int min, int max);
 
 int main() {
-
-    drawThatSVGMazeForMe("aloha.maze", 123456, true, 10, 10);
+    drawThatSVGMazeForMe("aloha.svg", 0, true, 10, 10);
 //    yourMazeDetailsInBinary("aloha.maze", 123456, true, 10, 10);
 
     return 0;
@@ -66,6 +66,18 @@ void feedMeInput() {
     } while (userInput != "stop");
 }
 
+int rngDice(int min, int max) {
+    int thatRandomNumber;
+
+    random_device randomDevice; // obtain a random number from hardware
+    mt19937 eng(randomDevice()); // seed the generator
+    uniform_int_distribution<> distribution(min, max); // define the range
+
+    thatRandomNumber = distribution(eng); // generate numbers
+
+    return thatRandomNumber;
+}
+
 vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height) {
     bool visitedArray[height][width];
     for (int m = 0; m < height; ++m) {
@@ -77,16 +89,24 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
     vector<mazePath> pathsList;
     if (seedStatus) {
         srand(clock() + seed);
+        seedStatus = true;
     } else {
         srand(clock());
+        seedStatus = false;
     }
 
     bool huntingStatus = true;
     bool killingStatus = true;
 
     coord startingCell;
-    startingCell.first = rand() % height;
-    startingCell.second = rand() % width;
+    if (seedStatus) {
+        startingCell.first = rngDice(0, height);
+        startingCell.second = rngDice(0, width);
+    } else {
+        startingCell.first = rand() % height;
+        startingCell.second = rand() % width;
+    }
+
     visitedArray[startingCell.first][startingCell.second] = true;
     bool starting = true;
 
@@ -137,7 +157,12 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
             availableNeighbors.clear();
             bool keepSeeking = true;
             while (keepSeeking) {
-                int currentRandom = rand() % neighbors.size();
+                int currentRandom;
+                if (seedStatus) {
+                    currentRandom = rand() % neighbors.size();
+                } else {
+                    currentRandom = rngDice(0, neighbors.size());
+                }
                 bool addingRandom = true;
                 for (int i = 0; i < availableNeighbors.size(); ++i) {
                     if (availableNeighbors[i] == currentRandom) {
@@ -173,37 +198,37 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
                 if (!visitedArray[k][i]) {
                     startingCell.first = k;
                     startingCell.second = i;
-                    vector<coord> neighbours;
-                    neighbours.clear();
+                    vector<coord> neighbors;
+                    neighbors.clear();
                     if (startingCell.first - 1 > -1) {
                         coord topCell;
                         topCell.first = startingCell.first - 1;
                         topCell.second = startingCell.second;
-                        neighbours.push_back(topCell);
+                        neighbors.push_back(topCell);
                     }
 
                     if (startingCell.second + 1 < width) {
                         coord rightCell;
                         rightCell.first = startingCell.first;
                         rightCell.second = startingCell.second + 1;
-                        neighbours.push_back(rightCell);
+                        neighbors.push_back(rightCell);
                     }
 
                     if (startingCell.first + 1 < height) {
                         coord bottomCell;
                         bottomCell.first = startingCell.first + 1;
                         bottomCell.second = startingCell.second;
-                        neighbours.push_back(bottomCell);
+                        neighbors.push_back(bottomCell);
                     }
 
                     if (startingCell.second - 1 > -1) {
                         coord leftCell;
                         leftCell.first = startingCell.first;
                         leftCell.second = startingCell.second - 1;
-                        neighbours.push_back(leftCell);
+                        neighbors.push_back(leftCell);
                     }
-                    for (int j = 0; j < neighbours.size(); ++j) {
-                        coord neighbour = neighbours[j];
+                    for (int j = 0; j < neighbors.size(); ++j) {
+                        coord neighbour = neighbors[j];
                         if (visitedArray[neighbour.first][neighbour.second]) {
                             foundStarting = true;
                             break;
@@ -214,7 +239,12 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
                         randomizedNeighbours.clear();
                         bool keepSeeking = true;
                         while (keepSeeking) {
-                            int currentRandom = rand() % neighbours.size();
+                            int currentRandom;
+                            if (seedStatus) {
+                                currentRandom = rand() % neighbors.size();
+                            } else {
+                                currentRandom = rngDice(0, neighbors.size());
+                            }
                             bool addingRandom = true;
                             for (int m = 0; m < randomizedNeighbours.size(); ++m) {
                                 if (randomizedNeighbours[m] == currentRandom) {
@@ -224,7 +254,7 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
                             }
                             if (addingRandom) {
                                 randomizedNeighbours.push_back(currentRandom);
-                                coord neighbour = neighbours[currentRandom];
+                                coord neighbour = neighbors[currentRandom];
                                 if (visitedArray[neighbour.first][neighbour.second]) {
                                     keepSeeking = false;
                                     visitedArray[startingCell.first][startingCell.second] = true;
@@ -234,7 +264,7 @@ vector<mazePath> hnkAllDemCells(int seed, bool seedStatus, int width, int height
                                     pathsList.push_back(edge1);
                                 }
                             } else {
-                                if (randomizedNeighbours.size() == neighbours.size()) {
+                                if (randomizedNeighbours.size() == neighbors.size()) {
                                     keepSeeking = false;
                                     foundStarting = false;
                                 }
@@ -369,7 +399,7 @@ void drawThatSVGMazeForMe(string fileName, int seed, bool seedStatus, int width,
     }
 
     ofstream file;
-    file.open(fileName, ios::out || ios::binary);
+    file.open(fileName);
     file << mazeString;
     file.close();
 }
