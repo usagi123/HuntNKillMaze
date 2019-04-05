@@ -31,7 +31,7 @@ int main() {
 }
 
 void feedMeInput() {
-    cout << "Syntax" << endl;
+    cout << "Params:" << endl;
     cout << "--g seed width height name" << endl;
     cout << "-g width height name" << endl;
 
