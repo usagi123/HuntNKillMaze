@@ -1,5 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/huntNkill.dir/main.cpp.o"
+  "CMakeFiles/huntNkill.dir/Coordinator.cpp.o"
+  "CMakeFiles/huntNkill.dir/Edge.cpp.o"
   "huntNkill.pdb"
   "huntNkill"
 )

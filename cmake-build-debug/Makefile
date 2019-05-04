@@ -123,6 +123,60 @@ huntNkill/fast:
 	$(MAKE) -f CMakeFiles/huntNkill.dir/build.make CMakeFiles/huntNkill.dir/build
 .PHONY : huntNkill/fast
 
+Coordinator.o: Coordinator.cpp.o
+
+.PHONY : Coordinator.o
+
+# target to build an object file
+Coordinator.cpp.o:
+	$(MAKE) -f CMakeFiles/huntNkill.dir/build.make CMakeFiles/huntNkill.dir/Coordinator.cpp.o
+.PHONY : Coordinator.cpp.o
+
+Coordinator.i: Coordinator.cpp.i
+
+.PHONY : Coordinator.i
+
+# target to preprocess a source file
+Coordinator.cpp.i:
+	$(MAKE) -f CMakeFiles/huntNkill.dir/build.make CMakeFiles/huntNkill.dir/Coordinator.cpp.i
+.PHONY : Coordinator.cpp.i
+
+Coordinator.s: Coordinator.cpp.s
+
+.PHONY : Coordinator.s
+
+# target to generate assembly for a file
+Coordinator.cpp.s:
+	$(MAKE) -f CMakeFiles/huntNkill.dir/build.make CMakeFiles/huntNkill.dir/Coordinator.cpp.s
+.PHONY : Coordinator.cpp.s
+
+Edge.o: Edge.cpp.o
+
+.PHONY : Edge.o
+
+# target to build an object file
+Edge.cpp.o:
+	$(MAKE) -f CMakeFiles/huntNkill.dir/build.make CMakeFiles/huntNkill.dir/Edge.cpp.o
+.PHONY : Edge.cpp.o
+
+Edge.i: Edge.cpp.i
+
+.PHONY : Edge.i
+
+# target to preprocess a source file
+Edge.cpp.i:
+	$(MAKE) -f CMakeFiles/huntNkill.dir/build.make CMakeFiles/huntNkill.dir/Edge.cpp.i
+.PHONY : Edge.cpp.i
+
+Edge.s: Edge.cpp.s
+
+.PHONY : Edge.s
+
+# target to generate assembly for a file
+Edge.cpp.s:
+	$(MAKE) -f CMakeFiles/huntNkill.dir/build.make CMakeFiles/huntNkill.dir/Edge.cpp.s
+.PHONY : Edge.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -159,6 +213,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... huntNkill"
+	@echo "... Coordinator.o"
+	@echo "... Coordinator.i"
+	@echo "... Coordinator.s"
+	@echo "... Edge.o"
+	@echo "... Edge.i"
+	@echo "... Edge.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

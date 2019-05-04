@@ -1,0 +1,8 @@
+//
+// Created by Mai Pham Quang Huy on 2019-05-04.
+//
+
+#ifndef HUNTNKILL_HNKALLDEMCELLS_H
+#define HUNTNKILL_HNKALLDEMCELLS_H
+
+#endif //HUNTNKILL_HNKALLDEMCELLS_H

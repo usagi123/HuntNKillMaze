@@ -80,6 +80,24 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/Users/imhikarucat/Desktop/CPP/huntNkill/Coordinator.cpp">
+			<Option target="huntNkill"/>
+		</Unit>
+		<Unit filename="/Users/imhikarucat/Desktop/CPP/huntNkill/Coordinator.h">
+			<Option target="huntNkill"/>
+		</Unit>
+		<Unit filename="/Users/imhikarucat/Desktop/CPP/huntNkill/Edge.cpp">
+			<Option target="huntNkill"/>
+		</Unit>
+		<Unit filename="/Users/imhikarucat/Desktop/CPP/huntNkill/Edge.h">
+			<Option target="huntNkill"/>
+		</Unit>
+		<Unit filename="/Users/imhikarucat/Desktop/CPP/huntNkill/Generator.h">
+			<Option target="huntNkill"/>
+		</Unit>
+		<Unit filename="/Users/imhikarucat/Desktop/CPP/huntNkill/hnkAllDemCells.h">
+			<Option target="huntNkill"/>
+		</Unit>
 		<Unit filename="/Users/imhikarucat/Desktop/CPP/huntNkill/main.cpp">
 			<Option target="huntNkill"/>
 		</Unit>

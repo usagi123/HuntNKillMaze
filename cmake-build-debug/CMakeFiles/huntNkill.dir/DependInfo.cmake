@@ -4,6 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "/Users/imhikarucat/Desktop/CPP/huntNkill/Coordinator.cpp" "/Users/imhikarucat/Desktop/CPP/huntNkill/cmake-build-debug/CMakeFiles/huntNkill.dir/Coordinator.cpp.o"
+  "/Users/imhikarucat/Desktop/CPP/huntNkill/Edge.cpp" "/Users/imhikarucat/Desktop/CPP/huntNkill/cmake-build-debug/CMakeFiles/huntNkill.dir/Edge.cpp.o"
   "/Users/imhikarucat/Desktop/CPP/huntNkill/main.cpp" "/Users/imhikarucat/Desktop/CPP/huntNkill/cmake-build-debug/CMakeFiles/huntNkill.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "AppleClang")
